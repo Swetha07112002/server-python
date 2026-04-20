@@ -3,7 +3,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 app = Flask(__name__)
-app.config["JSONIFY_PRETTYPRINT_REGULAR"] = True
+
 # Dummy license store
 licenses = {
     "TEST123": {
@@ -53,7 +53,7 @@ def get_logs():
     for log in logs:
         hwid = log["hwid"]
 
-        short_device = hwid[:8] + "..." + hwid[-5:]
+        short_device = hwid
 
         if short_device not in device_map:
             device_map[short_device] = {
