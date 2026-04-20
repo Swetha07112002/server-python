@@ -59,7 +59,7 @@ def get_logs():
             device_map[short_device] = {
                 "device": short_device,
                 "currentStatus": log["status"],
-                /n"history": []
+                "history": []
             }
 
         device_map[short_device]["history"].append({
