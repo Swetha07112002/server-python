@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
 from datetime import datetime
+from flask import render_template
+
 
 app = Flask(__name__)
 
@@ -41,33 +43,9 @@ def log():
 
     return "OK"
 
-@app.route("/logs", methods=["GET"])
-def get_logs():
-
-    device_map = {}
-
-    for log in logs:
-        hwid = log["hwid"]
-
-        short_device = hwid[:8] + "..." + hwid[-5:]
-
-        if short_device not in device_map:
-            device_map[short_device] = {
-                "device": short_device,
-                "currentStatus": log["status"],
-                "history": []
-            }
-
-        device_map[short_device]["history"].append({
-            "status": log["status"],
-            "date": datetime.strptime(log["date"], "%Y-%m-%d").strftime("%d-%m-%Y"),
-            "time": log["time"]
-        })
-
-        # latest status update
-        device_map[short_device]["currentStatus"] = log["status"]
-
-    return jsonify(list(device_map.values()))
+@app.route("/logs")
+def dashboard():
+    return render_template("dashboard.html")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)

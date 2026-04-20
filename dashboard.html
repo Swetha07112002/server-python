@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Device Dashboard</title>
+
+    <style>
+    .card {
+        width: 350px;
+        border-radius: 12px;
+        padding: 15px;
+        margin: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        font-family: Arial;
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .online { color: green; font-weight: bold; }
+    .offline { color: red; font-weight: bold; }
+
+    .history {
+        font-size: 13px;
+        margin-top: 10px;
+        max-height: 120px;
+        overflow-y: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<h2>Device Dashboard</h2>
+
+<div id="container"></div>
+
+<script>
+fetch("/logs")
+.then(res => res.json())
+.then(data => {
+
+    const container = document.getElementById("container");
+
+    data.forEach(device => {
+
+        let historyHTML = "";
+
+        device.history.slice().reverse().forEach(h => {
+            historyHTML += `
+                <div>
+                    ${h.status === "ONLINE" ? "🟢" : "🔴"}
+                    ${h.status} - ${h.time}
+                </div>
+            `;
+        });
+
+        container.innerHTML += `
+        <div class="card">
+            <div><b>Device:</b> ${device.device}</div>
+
+            <div class="${device.currentStatus === "ONLINE" ? "online" : "offline"}">
+                ${device.currentStatus}
+            </div>
+
+            <div class="history">
+                ${historyHTML}
+            </div>
+        </div>
+        `;
+    });
+
+});
+</script>
+
+</body>
+</html>
