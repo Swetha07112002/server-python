@@ -43,87 +43,18 @@ def log():
 
 @app.route("/logs", methods=["GET"])
 def get_logs():
-    if not logs:
-        return """
-        <html>
-        <head>
-            <title>Device Logs</title>
-            <style>
-                body { font-family: Arial; background:#111; color:white; text-align:center; padding:40px; }
-            </style>
-        </head>
-        <body>
-            <h2>No Logs Found</h2>
-        </body>
-        </html>
-        """
 
-    html = """
-    <html>
-    <head>
-        <title>Device Logs</title>
-        <style>
-            body {
-                font-family: Arial;
-                background:#111;
-                color:white;
-                padding:20px;
-            }
-            h2 {
-                text-align:center;
-                color:#00ff99;
-            }
-            table {
-                width:100%;
-                border-collapse:collapse;
-                margin-top:20px;
-                background:#1c1c1c;
-            }
-            th, td {
-                padding:12px;
-                border:1px solid #333;
-                text-align:center;
-            }
-            th {
-                background:#00aa66;
-                color:white;
-            }
-            tr:nth-child(even) {
-                background:#222;
-            }
-            tr:hover {
-                background:#333;
-            }
-        </style>
-    </head>
-    <body>
-        <h2>🖥 Device Status Logs</h2>
-        <table>
-            <tr>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Device</th>
-                <th>Status</th>
-            </tr>
-    """
+    clean = []
 
-    for row in reversed(logs):
-        html += f"""
-        <tr>
-            <td>{row['Date']}</td>
-            <td>{row['Time']}</td>
-            <td>{row['Device']}</td>
-            <td>{row['Status']}</td>
-        </tr>
-        """
+    for log in reversed(logs):   # latest first
+        clean.append({
+            "Device": log["hwid"][:8] + "..." + log["hwid"][-5:],
+            "Status": "🟢 ONLINE" if log["status"] == "ONLINE" else "🔴 OFFLINE",
+            "Date": datetime.strptime(log["date"], "%Y-%m-%d").strftime("%d-%m-%Y"),
+            "Time": log["time"]
+        })
 
-    html += """
-        </table>
-    </body>
-    </html>
-    """
-
-    return html
+    return jsonify(clean)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
