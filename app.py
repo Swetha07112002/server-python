@@ -44,17 +44,30 @@ def log():
 @app.route("/logs", methods=["GET"])
 def get_logs():
 
-    clean = []
+    device_map = {}
 
-    for log in reversed(logs):   # latest first
-        clean.append({
-            "Device": log["hwid"][:8] + "..." + log["hwid"][-5:],
-            "Status": "ONLINE" if log["status"] == "ONLINE" else "OFFLINE",
-            "Date": datetime.strptime(log["date"], "%Y-%m-%d").strftime("%d-%m-%Y"),
-            "Time": log["time"]
+    for log in logs:
+        hwid = log["hwid"]
+
+        short_device = hwid[:8] + "..." + hwid[-5:]
+
+        if short_device not in device_map:
+            device_map[short_device] = {
+                "device": short_device,
+                "currentStatus": log["status"],
+                "history": []
+            }
+
+        device_map[short_device]["history"].append({
+            "status": log["status"],
+            "date": datetime.strptime(log["date"], "%Y-%m-%d").strftime("%d-%m-%Y"),
+            "time": log["time"]
         })
 
-    return jsonify(clean)
+        # latest status update
+        device_map[short_device]["currentStatus"] = log["status"]
+
+    return jsonify(list(device_map.values()))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
