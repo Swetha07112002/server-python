@@ -65,8 +65,7 @@ def get_logs():
         device_map[short_device]["history"].append({
             "status": log["status"],
             "date": datetime.strptime(log["date"], "%Y-%m-%d").strftime("%d-%m-%Y"),
-            "time": log["time"],
-	    "device": log["short_device"]
+            "time": log["time"]
         })
 
         # latest status update
