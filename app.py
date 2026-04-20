@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 app = Flask(__name__)
 
@@ -28,15 +29,18 @@ def verify():
 
     return jsonify({"valid": False})
 
+
 @app.route("/log", methods=["POST"])
 def log():
     data = request.json
 
+    now = datetime.now(ZoneInfo("Asia/Kolkata"))
+
     logs.append({
         "hwid": data.get("hwid"),
         "status": data.get("status"),
-        "date": datetime.now().strftime("%Y-%m-%d"),
-        "time": datetime.now().strftime("%I:%M %p")
+        "date": now.strftime("%Y-%m-%d"),
+        "time": now.strftime("%I:%M %p")
     })
 
     return "OK"
