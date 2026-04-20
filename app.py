@@ -49,7 +49,7 @@ def get_logs():
     for log in reversed(logs):   # latest first
         clean.append({
             "Device": log["hwid"][:8] + "..." + log["hwid"][-5:],
-            "Status": "🟢 ONLINE" if log["status"] == "ONLINE" else "🔴 OFFLINE",
+            "Status": "ONLINE" if log["status"] == "ONLINE" else "OFFLINE",
             "Date": datetime.strptime(log["date"], "%Y-%m-%d").strftime("%d-%m-%Y"),
             "Time": log["time"]
         })
