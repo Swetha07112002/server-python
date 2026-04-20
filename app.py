@@ -43,7 +43,18 @@ def log():
 
 @app.route("/logs", methods=["GET"])
 def get_logs():
-    return jsonify(logs)
+
+    clean = []
+
+    for log in reversed(logs):   # latest first
+        clean.append({
+            "Device": log["hwid"][:8] + "..." + log["hwid"][-5:],
+            "Status": "🟢 ONLINE" if log["status"] == "ONLINE" else "🔴 OFFLINE",
+            "Date": datetime.strptime(log["date"], "%Y-%m-%d").strftime("%d-%m-%Y"),
+            "Time": log["time"]
+        })
+
+    return jsonify(clean)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
